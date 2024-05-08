@@ -11,25 +11,36 @@ router.get("/usuarios", async (request, response) => {
     }
 });
 
-router.post("/usuarios", async (request, response) => {
-    const usuario = new UsuarioModel(request.body);
+router.post("/usuarios/:id", async (request, response) => {
 
-    try {
-        await usuario.save();
-        response.send(usuario);
-    } catch (error) {
-        response.status(500).send(error);
+    try{
+        let usuario = await UsuarioModel.findOne({ _id: request.params.id });
+        if(!usuario){
+            usuario = new UsuarioModel(request.body);
+            try {
+                await usuario.save();
+                response.send(usuario);
+            } catch (error) {
+                response.status(500).send(error);
+            }
+        }else{
+            response.send(usuario);
+        }
+    }catch(error){
+        response.status(500).send({error});
     }
 });
 
-router.put("/usuarios", async (request, response) => {
-    const usuario = new UsuarioModel(request.body);
-
-    try {
-        await usuario.save();
-        response.send(usuario);
-    } catch (error) {
-        response.status(500).send(error);
+router.put("/usuarios/:id", async (request, response) => {
+    try{
+        let usuario = await UsuarioModel.findOne({ _id: request.params.id });
+        if(!usuario){
+            response.send("El usuario no existe");
+        }else{
+            response.send(usuario);
+        }
+    }catch(error){
+        response.status(500).send({error});
     }
 });
 

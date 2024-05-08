@@ -11,25 +11,35 @@ router.get("/conversaciones", async (request, response) => {
     }
 });
 
-router.post("/conversaciones", async (request, response) => {
-    const conversacion = new ConversacionModel(request.body);
-
-    try {
-        await conversacion.save();
+router.post("/conversaciones/:id", async (request, response) => {
+    try{
+        let conversacion = await ConversacionModel.findOne({ _id: request.params.id });
+        if(!conversacion){
+            conversacion = new ConversacionModel(request.body);
+            try {
+                await conversacion.save();
+                response.send(conversacion);
+            } catch (error) {
+                response.status(500).send({error});
+            }
+    }else{
         response.send(conversacion);
-    } catch (error) {
-        response.status(500).send(error);
+    }
+    }catch(error){
+        response.status(500).send({error});
     }
 });
 
-router.put("/conversaciones", async (request, response) => {
-    const conversacion = new ConversacionModel(request.body);
-
-    try {
-        await conversacion.save();
-        response.send(conversacion);
-    } catch (error) {
-        response.status(500).send(error);
+router.put("/conversaciones/:id", async (request, response) => {
+    try{
+        let conversacion = await ConversacionModel.findOne({ _id: request.params.id });
+        if(!conversacion){
+            response.send("La conversacion no existe")
+        }else{
+            response.send(conversacion);
+    }
+    }catch(error){
+        response.status(500).send({error});
     }
 });
 

@@ -11,25 +11,36 @@ router.get("/publicaciones", async (request, response) => {
     }
 });
 
-router.post("/publicaciones", async (request, response) => {
-    const publicacion = new PublicacionModel(request.body);
-
-    try {
-        await publicacion.save();
-        response.send(publicacion);
-    } catch (error) {
-        response.status(500).send(error);
+router.post("/publicacions/:id", async (request, response) => {
+    try{
+        let publicacion = await PublicacionModel.findOne({ _id: request.params.id });
+        if(!publicacion){
+            publicacion = new PublicacionModel(request.body);
+            try {
+                await publicacion.save();
+                response.send(publicacion);
+            } catch (error) {
+                response.status(500).send(error);
+            }
+        }else{
+            response.send(usuario);
+        }
+    }catch(error){
+        response.status(500).send({error});
     }
 });
 
-router.put("/publicaciones", async (request, response) => {
-    const publicacion = new PublicacionModel(request.body);
-
-    try {
-        await publicacion.save();
-        response.send(publicacion);
-    } catch (error) {
-        response.status(500).send(error);
+router.put("/publicacions/:id", async (request, response) => {
+   try{
+        let publicacion = await PublicacionModel.findOne({ _id: request.params.id });
+    
+        if(!publicacion){
+            response.send("La publicacion no existe");
+        }else{
+            response.send(usuario);
+    }
+   }catch(error){
+        response.status(500).send({error});
     }
 });
 

@@ -11,31 +11,42 @@ router.get("/comunidades", async (request, response) => {
     }
 });
 
-router.post("/comunidades", async (request, response) => {
-    const comunidad = new ComunidadModel(request.body);
+router.post("/comunidades/:id", async (request, response) => {
+    try{
+        let comunidad = await ComunidadModel.findOne({ _id: request.params.id });
+        if(comunidad==null){
+            comunidad = new ComunidadModel(request.body);
 
-    try {
-        await comunidad.save();
-        response.send(comunidad);
-    } catch (error) {
-        response.status(500).send(error);
+            try {
+                await comunidad.save();
+                response.send(comunidad);
+            } catch (error) {
+                response.status(500).send({error});
+            }
+        }else{
+            response.send(comunidad)
+        }
+    }catch(error){
+        response.status(500).send({error});
     }
 });
 
-router.put("/comunidades", async (request, response) => {
-    const comunidad = new ComunidadModel(request.body);
-
-    try {
-        await comunidad.save();
-        response.send(comunidad);
-    } catch (error) {
-        response.status(500).send(error);
+router.put("/comunidades/:id", async (request, response) => {
+    try{
+        let comunidad = await ComunidadModel.findOne({ _id: request.params.id });
+        if(comunidad==null){
+            response.send("La comunidad no existe")
+        }else{
+            response.send(comunidad)
+        }
+    }catch(error){
+        response.status(500).send({error});
     }
 });
 
 router.get("/comunidades/:id", async (request, response) => {
     try {
-        const comunidad = await ComunidadModel.findOne({ _id: request.params.id });
+        let comunidad = await ComunidadModel.findOne({ _id: request.params.id });
         response.send(comunidad);
     } catch (error) {
         response.status(500).send({ error });
